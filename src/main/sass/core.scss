@@ -1,0 +1,31 @@
+body, #root {
+    background: black;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+.world {
+    position: absolute;
+    height: 100vmin;
+    width: 100vmin;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.cell {
+    background: white;
+    animation: fade-in 0.2s ease-in;
+}

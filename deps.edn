@@ -1,0 +1,24 @@
+{:paths ["src/main/clojure" "src/main/resources"]
+ :deps  {thheller/shadow-cljs {:mvn/version "2.18.0"}
+
+         ;; view
+         re-com/re-com     {:mvn/version "2.13.2"}
+         reagent/reagent   {:mvn/version "1.1.0"}
+         re-frame/re-frame {:mvn/version "1.2.0"}
+
+         ;; Routing
+         metosin/reitit {:mvn/version "0.5.17"}
+
+         ;; Logging
+         com.taoensso/timbre       {:mvn/version "5.1.2"}
+         com.fzakaria/slf4j-timbre {:mvn/version "0.3.21"}
+
+         ;; Http
+         cljs-http/cljs-http   {:mvn/version "0.1.46"}
+         day8.re-frame/http-fx {:mvn/version "0.2.4"}
+
+         ;; Config
+         integrant/integrant {:mvn/version "0.8.0"}}
+ :aliases
+ {:dev {:extra-deps  {garden/garden {:mvn/version "1.3.10"}}
+        :extra-paths ["src/dev/clojure" "src/dev/resources"]}}}

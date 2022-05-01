@@ -1,0 +1,8 @@
+{:deps     {:aliases [:dev]}
+ :dev-http {3000 ["src/main/resources/public" "target/public"]}
+ :builds
+ {:life {:target      :browser
+         :asset-path  "/js"
+         :output-dir  "target/public/js"
+         :build-hooks [(style/render-css 1 2 3)]
+         :modules     {:core {:init-fn one.alexsan.life/main}}}}}
