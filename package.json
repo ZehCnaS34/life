@@ -1,9 +1,12 @@
 {
-  "name": "@violet.city/glimmer",
+  "name": "@violet.city/life",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
+    "sass:build": "sass src/main/sass:target/public/css",
+    "cljs:build": "shadow-cljs release life",
+    "build": "npm run sass:build && npm run cljs:build",
     "sass:watch": "sass --watch src/main/sass:target/public/css"
   },
   "keywords": [],

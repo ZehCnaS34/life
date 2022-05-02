@@ -22,7 +22,6 @@
 (frame/reg-fx
  ::periodic!
  (fn [{:keys [ms event]}]
-   (println "setting")
    (js/setTimeout #(frame/dispatch event) ms)))
 
 (frame/reg-event-db

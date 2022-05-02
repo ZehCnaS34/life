@@ -1,6 +1,5 @@
 (ns one.alexsan.life
-  (:require [clojure.pprint :as pp]
-            [goog.dom :as gdom]
+  (:require [goog.dom :as gdom]
             [reagent.core :as r]
             [one.alexsan.life.cell :as cell]
             [one.alexsan.life.db :as db]

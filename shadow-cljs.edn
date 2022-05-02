@@ -4,5 +4,4 @@
  {:life {:target      :browser
          :asset-path  "/js"
          :output-dir  "target/public/js"
-         :build-hooks [(style/render-css 1 2 3)]
          :modules     {:core {:init-fn one.alexsan.life/main}}}}}
