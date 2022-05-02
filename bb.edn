@@ -4,9 +4,11 @@
  :tasks
  {:requires ([babashka.fs :as fs]
              [babashka.process :as process]
-             [life.tool :as t])
+             [life.tool :as t]
+             [life.tool.docker :as d])
   clean     (shell "rm -rf target")
   build     (do (shell "npm run sass:build")
                 (shell "npx shadow-cljs release life")
                 (t/generate-html)
-                (shell "docker build -t reg.cork.lan/zehcnas34/life ."))}}
+                (d/build "life")
+                (d/push "life"))}}
