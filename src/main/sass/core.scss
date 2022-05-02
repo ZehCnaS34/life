@@ -1,5 +1,6 @@
 body, #root {
-    background: black;
+    background: white;
+    font-family: monospace;
     padding: 0;
     margin: 0;
     position: absolute;
@@ -7,13 +8,39 @@ body, #root {
     width: 100%;
 }
 
-.world {
-    position: absolute;
-    height: 100vmin;
-    width: 100vmin;
-    left: 50%;
-    transform: translateX(-50%);
+#root {
+    display: grid;
+    grid-template-areas:
+        ". .       ."
+        ". world   ."
+        ". actions ."
+    ;
+    grid-template-columns: 1fr 700px 1fr;
+    grid-template-rows: 1fr 700px 1fr;
+    gap: 6px;
 }
+
+
+.world-container {
+    border: 2px solid grey;
+    grid-area: world;
+    position: relative;
+    .world {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+    }
+
+    .cursor {
+        z-index: 1000;
+        border-radius: 2px;
+        background: red;
+        box-shadow: inset 0 0 2px red;
+        pointer-events: none;
+    }
+}
+
+
 
 @keyframes fade-in {
     from {
@@ -26,6 +53,33 @@ body, #root {
 }
 
 .cell {
-    background: white;
+    border-radius: 2px;
+    background: #0096ff;
+    box-shadow: inset 0 0 2px grey;
     animation: fade-in 0.2s ease-in;
+    pointer-events: none;
+}
+
+
+
+.actions {
+    grid-area: actions;
+    color: black;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    .stats {
+        flex: 1;
+        .stat {
+            .label {
+                margin-right: 4px;
+            }
+            .value {
+                margin-left: 4px;
+            }
+            margin-right: 4px;
+        }
+    }
+    .controls {
+    }
 }

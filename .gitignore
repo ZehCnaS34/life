@@ -20,3 +20,6 @@ pom.xml.asc
 
 
 /node_modules
+
+/.clj-kondo
+/.lsp
