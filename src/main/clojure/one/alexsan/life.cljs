@@ -17,11 +17,11 @@
   (let [value (<< sub)]
     [:span.stat [:span.label label] [:span.value value]]))
 
+;; NOTE: This may contain a bug when used in a component.
 (defn delay-sync [ref event]
   (letfn [(handler [_ _ _ new-value]
             (>> (conj event new-value)))]
     (let [handler (util/debounce 10 handler)]
-      (println "adding watch")
       (add-watch ref ::delay-sync handler))))
 
 (defn speed-adjuster
@@ -33,7 +33,7 @@
      [:label "Speed " speed]
      [:input {:type      :range
               :min       20
-              :max       10000
+              :max       1000
               :value     (or @internal speed)
               :on-change #(>> [:set-speed (util/event-value %)])}]]))
 

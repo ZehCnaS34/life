@@ -86,7 +86,6 @@
     (frame/reg-event-db
      event-key
      (fn [db [_ value]]
-       (println value)
        (assoc db key value)))))
 
 (reg-root-set :speed)
