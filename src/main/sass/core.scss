@@ -11,14 +11,37 @@ body, #root {
 #root {
     display: grid;
     // TODO: Make this bit responsive.
-    grid-template-areas:
-        ". .       ."
-        ". world   ."
-        ". actions ."
-    ;
-    grid-template-columns: 1fr 700px 1fr;
-    grid-template-rows: 1fr 700px 1fr;
-    gap: 6px;
+    $small: 300px;
+    $medium: 600px;
+    $large: 1200px;
+    @media screen and (max-width: $small) {
+        grid-template-areas:
+            "world   "
+            "actions "
+        ;
+        grid-template-columns: 1fr;
+        grid-template-rows: 393px 1fr;
+        gap: 6px;
+    }
+    @media screen and (min-width: $small + 1) and (max-width: $medium) {
+        grid-template-areas:
+            "world   "
+            "actions "
+        ;
+        grid-template-columns: 1fr;
+        grid-template-rows: 393px 1fr;
+        gap: 6px;
+    }
+    @media screen and (min-width: $medium + 1) and (max-width: $large) {
+        grid-template-areas:
+            ". .       ."
+            ". world   ."
+            ". actions ."
+        ;
+        grid-template-columns: 1fr 700px 1fr;
+        grid-template-rows: 1fr 700px 1fr;
+        gap: 6px;
+    }
 }
 
 
