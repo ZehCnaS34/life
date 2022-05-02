@@ -5,6 +5,8 @@
             [reagent.dom :as rdom]
             [cljs.core.async :as asy]))
 
+(def max-coord 50)
+
 (def live-rules
   {2 :live
    3 :live})
@@ -18,7 +20,14 @@
 (defprotocol Style
   (style [this]))
 
+(defprotocol InBound
+  (in-bound? [this]))
+
 (defrecord Cell [x y]
+  InBound
+  (in-bound? [this]
+    (and (<= 0 x (dec max-coord))
+         (<= 0 y (dec max-coord))))
   Style
   (style [this]
     (let [x% (str (* 100 x) "%")
@@ -38,7 +47,8 @@
   (->> (for [x'    (range (dec x) (inc (inc x)))
              y'    (range (dec y) (inc (inc y)))
              :let  [neighbor (->Cell x' y')]
-             :when (not= neighbor self)]
+             :when (and (not= neighbor self)
+                        (in-bound? neighbor))]
          neighbor)
        (into #{})))
 
@@ -47,7 +57,8 @@
              y'    (range (dec y) (inc (inc y)))
              :let  [neighbor (->Cell x' y')]
              :when (and (not= neighbor self)
-                        (contains? world neighbor))]
+                        (contains? world neighbor)
+                        (in-bound? neighbor))]
          neighbor)
        (into #{})
        (count)))
@@ -61,7 +72,7 @@
 
 (def root (gdom/getElement "root"))
 
-(defonce world (r/atom (rand-world 50)))
+(defonce world (r/atom (rand-world max-coord)))
 
 (defn world-view
   []
