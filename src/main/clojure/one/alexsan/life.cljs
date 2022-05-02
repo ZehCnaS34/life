@@ -17,6 +17,26 @@
   (let [value (<< sub)]
     [:span.stat [:span.label label] [:span.value value]]))
 
+(defn delay-sync [ref event]
+  (letfn [(handler [_ _ _ new-value]
+            (>> (conj event new-value)))]
+    (let [handler (util/debounce 10 handler)]
+      (println "adding watch")
+      (add-watch ref ::delay-sync handler))))
+
+(defn speed-adjuster
+  []
+  (let [speed    (<< [:speed])
+        internal (r/atom nil)]
+    (delay-sync internal [:set-speed])
+    [:span
+     [:label "Speed " speed]
+     [:input {:type      :range
+              :min       20
+              :max       10000
+              :value     (or @internal speed)
+              :on-change #(>> [:set-speed (util/event-value %)])}]]))
+
 (defn action-view
   []
   (let [active? (<< [:active?])]
@@ -25,6 +45,7 @@
       [stat-view "Generation" [:generation]]
       [stat-view "Cells" [:cell-count]]]
      [:div.controls
+      [speed-adjuster]
       [:button {:on-click #(>> [:random-world])} "new world"]
       [:button {:on-click #(>> [:clear-world])} "clear world"]
       [:button
@@ -35,9 +56,9 @@
   []
   (let [w (<< [:world])]
     [:div.world
-     {:on-mouse-down #(>> [:place-cell])
+     {:on-mouse-down  #(>> [:place-cell])
       :on-mouse-leave #(>> [:clear-cursor])
-      :on-mouse-move  #(>> [:set-cursor-position (util/event->cell-pos %)])}
+      :on-mouse-move  (util/debounce 50 #(>> [:set-cursor-position (util/event->cell-pos %)]))}
      (for [cell w]
        [:div.cell
         {:data-x (:x cell)

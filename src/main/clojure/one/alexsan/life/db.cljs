@@ -2,14 +2,17 @@
   (:require [re-frame.core :as frame]
             [one.alexsan.life.cell :as cell]))
 
-(defn trigger-generation [ms event]
+(defn trigger-generation [_ event]
   {:id     ::trigger-generation
    :before identity
    :after  (fn [context]
-             (let [active? (-> context :effects :db :active?)]
+             (let [active? (-> context :effects :db :active?)
+                   speed (-> context :effects :db :speed)]
                (cond-> context
                  active? (update-in [:effects :fx] (fnil conj [])
-                                    [::periodic! {:ms ms :event event}]))))})
+                                    [::periodic! {:ms speed :event event}]))))})
+
+(def tg (trigger-generation 10 [:update-world]))
 
 (defn create-world-when-empty []
   {:id     ::create-world-when-empty
@@ -26,10 +29,11 @@
 
 (frame/reg-event-db
  :init
- [(trigger-generation 1000 [:update-world])]
+ [tg]
  (fn [_ _]
    {:active?    true
     :generation 0
+    :speed      1000
     :world      (cell/rand-world 50)}))
 
 (frame/reg-event-db
@@ -72,14 +76,29 @@
 
 (frame/reg-event-db
  :play
- [(trigger-generation 1000 [:update-world])]
+ [tg]
  (fn [db []]
    (assoc db :active? true)))
 
-(frame/reg-sub
- :world
- (fn [db _]
-   (:world db)))
+(defn reg-root-set [key]
+  {:pre [(keyword? key)]}
+  (let [event-key (keyword (str "set-" (name key)))]
+    (frame/reg-event-db
+     event-key
+     (fn [db [_ value]]
+       (println value)
+       (assoc db key value)))))
+
+(reg-root-set :speed)
+
+(defn reg-root-sub [key]
+  (frame/reg-sub key (fn [db _] (key db))))
+
+(reg-root-sub :active?)
+(reg-root-sub :generation)
+(reg-root-sub :cursor)
+(reg-root-sub :world)
+(reg-root-sub :speed)
 
 (frame/reg-sub
  :cell-count
@@ -87,25 +106,10 @@
  (fn [world _]
    (count world)))
 
-(frame/reg-sub
- :cursor
- (fn [db _]
-   (:cursor db)))
-
-(frame/reg-sub
- :generation
- (fn [db _]
-   (:generation db)))
-
-(frame/reg-sub
- :active?
- (fn [db _]
-   (:active? db)))
-
 (frame/reg-event-db
  :update-world
  [(create-world-when-empty)
-  (trigger-generation 1000 [:update-world])]
+  tg]
  (fn [db _]
    (-> db
        (update :world cell/update-world)
