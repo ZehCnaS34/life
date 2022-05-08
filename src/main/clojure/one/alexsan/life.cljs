@@ -1,11 +1,12 @@
 (ns one.alexsan.life
   (:require [goog.dom :as gdom]
             [reagent.core :as r]
+            [reagent.dom :as rdom]
+            [one.alexsan.life.gl :as gl]
             [one.alexsan.life.cell :as cell]
             [one.alexsan.life.db :as db]
             [one.alexsan.life.util :as util]
             [re-frame.core :as frame]
-            [reagent.dom :as rdom]
             [cljs.core.async :as asy]))
 
 (def << (comp deref frame/subscribe))
@@ -52,19 +53,36 @@
        {:on-click #(>> [(if active? :pause :play)])}
        (if active? "pause" "play")]]]))
 
+(defrecord Cell [x y]
+  gl/Renderable
+  (init [this gl]
+    (println "initialize init"))
+  (render [this deps]
+    (println "render cell"))
+  (fini [this gl]
+    (println "fini")))
+
 (defn world-view
   []
-  (let [w (<< [:world])]
-    [:div.world
-     {:on-mouse-down  #(>> [:place-cell])
-      :on-mouse-leave #(>> [:clear-cursor])
-      :on-mouse-move  (util/debounce 50 #(>> [:set-cursor-position (util/event->cell-pos %)]))}
-     (for [cell w]
-       [:div.cell
-        {:data-x (:x cell)
-         :data-y (:y cell)
-         :style  (cell/style cell)
-         :key    (cell/react-key cell)}])]))
+  (let [renderer* (atom nil)]
+    (r/create-class
+     {:component-did-mount
+      (fn [this]
+        (let [cell   (->Cell 0 0)
+              node   (rdom/dom-node this)
+              canvas (.querySelector node "canvas")
+              gl     (gl/context canvas)]
+          (reset! renderer*
+                  (doto (gl/make-renderer gl (fn [dt]))
+                    (gl/add-renderable cell)
+                    (gl/start {})))))
+      :component-will-unmount
+      (fn [this]
+        (when-let [r @renderer*]
+          (gl/stop r {})))
+      :render
+      (fn [this]
+        [:div.world [:canvas]])})))
 
 (defn world-container-view
   []
