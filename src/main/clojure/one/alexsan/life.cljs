@@ -62,19 +62,24 @@
   (fini [this gl]
     (println "fini")))
 
+(defrecord World [cells]
+  gl/Renderable
+  (init [this gl])
+  (render [this deps])
+  (fini [this gl]))
+
 (defn world-view
   []
   (let [renderer* (atom nil)]
     (r/create-class
      {:component-did-mount
       (fn [this]
-        (let [cell   (->Cell 0 0)
-              node   (rdom/dom-node this)
+        (let [node   (rdom/dom-node this)
               canvas (.querySelector node "canvas")
               gl     (gl/context canvas)]
           (reset! renderer*
-                  (doto (gl/make-renderer gl (fn [dt]))
-                    (gl/add-renderable cell)
+                  (doto (gl/make-renderer gl)
+                    (gl/add-renderable (->World []))
                     (gl/start {})))))
       :component-will-unmount
       (fn [this]

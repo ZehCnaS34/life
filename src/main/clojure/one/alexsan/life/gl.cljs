@@ -1,5 +1,6 @@
 (ns one.alexsan.life.gl)
 
+
 (defprotocol Render
   (start [this params])
   (stop [this params]))
@@ -35,7 +36,7 @@
                (when (prop value)
                  (handler)))))
 
-(defn make-renderer [gl f]
+(defn make-renderer [gl]
   (let [state   (atom {:running? false
                        :renderables []})
         handler (fn handler []
